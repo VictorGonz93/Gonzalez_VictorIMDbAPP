@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "358877077053",
+    "project_id": "gonzalezvictorimdbapp",
+    "storage_bucket": "gonzalezvictorimdbapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:358877077053:android:5616469f597be2df48d454",
+        "android_client_info": {
+          "package_name": "edu.pmdm.gonzalez_victorimdbapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCN7Pw9tMv7hSquO9W6303TqAHskcz3rqQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
