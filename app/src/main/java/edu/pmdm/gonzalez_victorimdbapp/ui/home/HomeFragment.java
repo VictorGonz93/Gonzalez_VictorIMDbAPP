@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,7 +38,9 @@ public class HomeFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
         recyclerView = root.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // Configurar RecyclerView con GridLayoutManager
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2)); // 2 columnas
 
         movieAdapter = new MovieAdapter(movieList);
         recyclerView.setAdapter(movieAdapter);
@@ -46,6 +49,7 @@ public class HomeFragment extends Fragment {
 
         return root;
     }
+
 
     private void fetchMovies() {
         IMDBApiService apiService = new Retrofit.Builder()
@@ -62,16 +66,16 @@ public class HomeFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     List<PopularMoviesResponse.Edge> edges = response.body().getData().getTopMeterTitles().getEdges();
 
-                    for (PopularMoviesResponse.Edge edge : edges) {
-                        PopularMoviesResponse.Node node = edge.getNode();
+                    // Limitar a los primeros 10 elementos
+                    int limit = Math.min(edges.size(), 10);
+                    for (int i = 0; i < limit; i++) {
+                        PopularMoviesResponse.Node node = edges.get(i).getNode();
 
-                        // Extraer datos de cada película
                         String id = node.getId();
                         String title = node.getTitleText().getText();
                         String imageUrl = node.getPrimaryImage() != null ? node.getPrimaryImage().getUrl() : null;
                         int releaseYear = node.getReleaseYear() != null ? node.getReleaseYear().getYear() : 0;
 
-                        // Crear objeto Movie
                         movieList.add(new Movie(id, title, imageUrl, releaseYear));
                     }
 
@@ -85,5 +89,6 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
 
 }

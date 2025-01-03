@@ -45,7 +45,6 @@ public class MovieListActivity extends AppCompatActivity {
     }
 
     private void fetchMovies() {
-        // Inicializar Retrofit
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://imdb-com.p.rapidapi.com/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -61,33 +60,31 @@ public class MovieListActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     List<PopularMoviesResponse.Edge> edges = response.body().getData().getTopMeterTitles().getEdges();
 
-                    for (PopularMoviesResponse.Edge edge : edges) {
-                        PopularMoviesResponse.Node node = edge.getNode();
+                    // Limitar a los primeros 10 elementos
+                    int limit = Math.min(edges.size(), 10);
+                    for (int i = 0; i < limit; i++) {
+                        PopularMoviesResponse.Node node = edges.get(i).getNode();
 
-                        // Extraer la información de la película
                         String id = node.getId();
                         String title = node.getTitleText().getText();
                         String imageUrl = node.getPrimaryImage() != null ? node.getPrimaryImage().getUrl() : null;
                         int releaseYear = node.getReleaseYear() != null ? node.getReleaseYear().getYear() : 0;
 
-                        // Crear un objeto Movie y añadirlo a la lista
                         movieList.add(new Movie(id, title, imageUrl, releaseYear));
                     }
 
-                    // Notificar al adaptador para actualizar el RecyclerView
                     movieAdapter.notifyDataSetChanged();
                 } else {
-                    // Manejar error en la respuesta
                     Log.e("API_ERROR", "Respuesta no exitosa: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<PopularMoviesResponse> call, Throwable t) {
-                // Manejar errores de la llamada
                 Log.e("API_ERROR", "Error en la llamada a la API", t);
             }
         });
     }
+
 
 }

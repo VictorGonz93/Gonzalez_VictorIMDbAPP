@@ -37,21 +37,22 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        SignInButton signInButton = findViewById(R.id.btnSignIn);
-        signInButton.setSize(SignInButton.SIZE_WIDE); // Usa el tamaño amplio para incluir el texto "Sign in with Google"
-        signInButton.setColorScheme(SignInButton.COLOR_LIGHT); // Cambia el color si prefieres claro u oscuro
 
         // Configurar Firebase Auth
         firebaseAuth = FirebaseAuth.getInstance();
 
-        // Desloguear al usuario
-        firebaseAuth.signOut();
+        // Verificar si ya hay un usuario autenticado
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser != null) {
+            // Usuario ya autenticado, redirigir a MainActivity
+            navigateToMainActivity(currentUser);
+            return;
+        }
 
-        // Cerrar sesión en Google
-        GoogleSignIn.getClient(
-                this,
-                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
-        ).signOut();
+        // Configurar botón de inicio de sesión
+        SignInButton signInButton = findViewById(R.id.btnSignIn);
+        signInButton.setSize(SignInButton.SIZE_WIDE);
+        signInButton.setColorScheme(SignInButton.COLOR_LIGHT);
 
         // Configurar Google Sign-In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -59,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
                 .requestEmail()
                 .build();
 
+        // Evento de clic para iniciar sesión
         findViewById(R.id.btnSignIn).setOnClickListener(v -> {
             Intent signInIntent = GoogleSignIn.getClient(this, gso).getSignInIntent();
             signInLauncher.launch(signInIntent);

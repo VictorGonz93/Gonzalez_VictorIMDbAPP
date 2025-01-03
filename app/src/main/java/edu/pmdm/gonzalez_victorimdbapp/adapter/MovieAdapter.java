@@ -1,5 +1,6 @@
 package edu.pmdm.gonzalez_victorimdbapp.adapter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,44 +21,47 @@ import edu.pmdm.gonzalez_victorimdbapp.models.Movie;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
-    private List<Movie> movies;
+    private List<Movie> movieList;
+    private Context context;
 
-    public MovieAdapter(List<Movie> movies) {
-        this.movies = movies;
-
-
+    public MovieAdapter(List<Movie> movieList) {
+        this.movieList = movieList;
     }
 
     @NonNull
     @Override
     public MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_movie, parent, false);
+        context = parent.getContext();
+        View view = LayoutInflater.from(context).inflate(R.layout.item_movie, parent, false);
         return new MovieViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
-        Movie movie = movies.get(position);
-        holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), MovieDetailsActivity.class);
-            intent.putExtra("MOVIE_ID", "tt0120338"); // Reemplaza con el ID real de la película
-            v.getContext().startActivity(intent);
-        });
+        Movie movie = movieList.get(position);
 
+        Glide.with(context)
+                .load(movie.getImageUrl())
+                .placeholder(R.drawable.default_user_image)
+                .into(holder.imageView);
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, MovieDetailsActivity.class);
+            intent.putExtra("MOVIE_ID", movie.getId());
+            context.startActivity(intent);
+        });
     }
 
     @Override
     public int getItemCount() {
-        return movies.size();
+        return movieList.size();
     }
 
-    static class MovieViewHolder extends RecyclerView.ViewHolder {
-        TextView titleTextView;
+    public static class MovieViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
 
         public MovieViewHolder(@NonNull View itemView) {
             super(itemView);
-            titleTextView = itemView.findViewById(R.id.movie_title);
             imageView = itemView.findViewById(R.id.movie_image);
         }
     }
