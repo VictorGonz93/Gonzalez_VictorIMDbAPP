@@ -1,29 +1,47 @@
 package edu.pmdm.gonzalez_victorimdbapp.models;
 
-public class MovieOverviewResponse {
+import com.google.gson.annotations.SerializedName;
 
-    private Data data;
+public class MovieOverviewResponse {
+    @SerializedName("data")
+    public Data data;
 
     public Data getData() {
         return data;
     }
 
     public static class Data {
-        private TitleText titleText;
-        private PrimaryImage primaryImage;
-        private ReleaseYear releaseYear;
-        private Plot plot;
+        @SerializedName("title")
+        public Title title;
+
+        public Title getTitle() {
+            return title;
+        }
+    }
+
+    public static class Title {
+        @SerializedName("titleText")
+        public TitleText titleText;
+
+        @SerializedName("releaseDate")
+        public ReleaseDate releaseDate;
+
+        @SerializedName("ratingsSummary")
+        public RatingsSummary ratingsSummary;
+
+        @SerializedName("plot")
+        public Plot plot;
 
         public TitleText getTitleText() {
             return titleText;
         }
 
-        public PrimaryImage getPrimaryImage() {
-            return primaryImage;
+        public ReleaseDate getReleaseDate() {
+            return releaseDate;
         }
 
-        public ReleaseYear getReleaseYear() {
-            return releaseYear;
+        public RatingsSummary getRatingsSummary() {
+            return ratingsSummary;
         }
 
         public Plot getPlot() {
@@ -32,31 +50,59 @@ public class MovieOverviewResponse {
     }
 
     public static class TitleText {
-        private String text;
+        @SerializedName("text")
+        public String text;
 
         public String getText() {
             return text;
         }
     }
 
-    public static class PrimaryImage {
-        private String url;
 
-        public String getUrl() {
-            return url;
+    public static class ReleaseDate {
+        @SerializedName("day")
+        public Integer day;
+
+        @SerializedName("month")
+        public Integer month;
+
+        @SerializedName("year")
+        public Integer year;
+
+        public Integer getDay() {
+            return day;
         }
-    }
 
-    public static class ReleaseYear {
-        private int year;
+        public Integer getMonth() {
+            return month;
+        }
 
-        public int getYear() {
+        public Integer getYear() {
             return year;
         }
     }
 
+    public static class RatingsSummary {
+        @SerializedName("aggregateRating")
+        public Double aggregateRating;
+
+        public Double getAggregateRating() {
+            return aggregateRating;
+        }
+    }
+
     public static class Plot {
-        private String plainText;
+        @SerializedName("plotText")
+        public PlotText plotText;
+
+        public PlotText getPlotText() {
+            return plotText;
+        }
+    }
+
+    public static class PlotText {
+        @SerializedName("plainText")
+        public String plainText;
 
         public String getPlainText() {
             return plainText;

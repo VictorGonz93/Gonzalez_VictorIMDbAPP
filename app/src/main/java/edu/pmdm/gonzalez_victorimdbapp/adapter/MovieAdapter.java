@@ -40,15 +40,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
         Movie movie = movieList.get(position);
 
-        Glide.with(context)
+        Glide.with(holder.itemView.getContext())
                 .load(movie.getImageUrl())
-                .placeholder(R.drawable.default_user_image)
                 .into(holder.imageView);
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, MovieDetailsActivity.class);
-            intent.putExtra("MOVIE_ID", movie.getId());
-            context.startActivity(intent);
+            Intent intent = new Intent(holder.itemView.getContext(), MovieDetailsActivity.class);
+            intent.putExtra("MOVIE_DATA", movie); // Pasar el objeto Movie
+            holder.itemView.getContext().startActivity(intent);
         });
     }
 

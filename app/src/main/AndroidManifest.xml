@@ -26,6 +26,11 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Gonzalez_VictorIMDbAPP.NoActionBar" />
+
+        <activity
+            android:name=".MovieDetailsActivity"
+            android:exported="true"
+            android:label="Gonzalez_VictorIMDbAPP"/>
     </application>
 
 </manifest>

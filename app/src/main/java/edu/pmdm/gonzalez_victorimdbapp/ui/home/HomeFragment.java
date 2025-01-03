@@ -1,5 +1,6 @@
 package edu.pmdm.gonzalez_victorimdbapp.ui.home;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,21 +72,29 @@ public class HomeFragment extends Fragment {
                     for (int i = 0; i < limit; i++) {
                         PopularMoviesResponse.Node node = edges.get(i).getNode();
 
+                        // Extraer el ID y la URL de la imagen de cada película
                         String id = node.getId();
-                        String title = node.getTitleText().getText();
                         String imageUrl = node.getPrimaryImage() != null ? node.getPrimaryImage().getUrl() : null;
-                        int releaseYear = node.getReleaseYear() != null ? node.getReleaseYear().getYear() : 0;
 
-                        movieList.add(new Movie(id, title, imageUrl, releaseYear));
+                        // Crear un objeto Movie con solo el ID y la URL de la imagen
+                        Movie movie = new Movie();
+                        movie.setId(id);
+                        movie.setImageUrl(imageUrl);
+
+                        // Añadir la película a la lista
+                        movieList.add(movie);
                     }
 
+                    // Notificar al adaptador para actualizar el RecyclerView
                     movieAdapter.notifyDataSetChanged();
+                } else {
+                    Log.e("API_ERROR", "Respuesta no exitosa: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<PopularMoviesResponse> call, Throwable t) {
-                t.printStackTrace();
+                Log.e("API_ERROR", "Error en la llamada a la API", t);
             }
         });
     }

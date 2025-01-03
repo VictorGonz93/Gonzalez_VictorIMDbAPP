@@ -13,6 +13,7 @@ import java.util.List;
 import edu.pmdm.gonzalez_victorimdbapp.adapter.MovieAdapter;
 import edu.pmdm.gonzalez_victorimdbapp.api.IMDBApiService;
 import edu.pmdm.gonzalez_victorimdbapp.models.Movie;
+import edu.pmdm.gonzalez_victorimdbapp.models.MovieOverviewResponse;
 import edu.pmdm.gonzalez_victorimdbapp.models.PopularMoviesResponse;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,15 +66,26 @@ public class MovieListActivity extends AppCompatActivity {
                     for (int i = 0; i < limit; i++) {
                         PopularMoviesResponse.Node node = edges.get(i).getNode();
 
+                        // Extraer los datos básicos de la película
                         String id = node.getId();
                         String title = node.getTitleText().getText();
                         String imageUrl = node.getPrimaryImage() != null ? node.getPrimaryImage().getUrl() : null;
-                        int releaseYear = node.getReleaseYear() != null ? node.getReleaseYear().getYear() : 0;
 
-                        movieList.add(new Movie(id, title, imageUrl, releaseYear));
+                        // Asignar año de lanzamiento si existe
+                        String releaseYear = node.getReleaseYear() != null
+                                ? String.valueOf(node.getReleaseYear().getYear())
+                                : "Unknown";
+
+                        // Crear un objeto Movie y añadirlo a la lista
+                        Movie movie = new Movie();
+                        movie.setId(id);
+                        movie.setTitle(title);
+                        movie.setImageUrl(imageUrl);
+                        movie.setReleaseYear(releaseYear);
+
+                        // Llamar al endpoint 'get-overview' para completar la información
+                        fetchAdditionalDetails(apiService, movie);
                     }
-
-                    movieAdapter.notifyDataSetChanged();
                 } else {
                     Log.e("API_ERROR", "Respuesta no exitosa: " + response.code());
                 }
@@ -85,6 +97,54 @@ public class MovieListActivity extends AppCompatActivity {
             }
         });
     }
+
+    // Método para obtener detalles adicionales de cada película
+    private void fetchAdditionalDetails(IMDBApiService apiService, Movie movie) {
+        Call<MovieOverviewResponse> call = apiService.getOverview(API_KEY, API_HOST, movie.getId());
+
+        call.enqueue(new Callback<MovieOverviewResponse>() {
+            @Override
+            public void onResponse(Call<MovieOverviewResponse> call, Response<MovieOverviewResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    MovieOverviewResponse.Data data = response.body().getData();
+
+                    // Extraer datos adicionales
+                    if (data != null && data.getTitle() != null) {
+                        MovieOverviewResponse.Title title = data.getTitle();
+
+                        // Asignar resumen (overview)
+                        if (title.getPlot() != null && title.getPlot().getPlotText() != null) {
+                            movie.setOverview(title.getPlot().getPlotText().getPlainText());
+                        }
+
+                        // Asignar puntuación (rating)
+                        if (title.getRatingsSummary() != null) {
+                            movie.setRating(String.valueOf(title.getRatingsSummary().getAggregateRating()));
+                        }
+
+                        // Formatear la fecha de lanzamiento
+                        if (title.getReleaseDate() != null) {
+                            MovieOverviewResponse.ReleaseDate releaseDate = title.getReleaseDate();
+                            String formattedDate = (releaseDate.getDay() != null ? releaseDate.getDay() + "/" : "")
+                                    + (releaseDate.getMonth() != null ? releaseDate.getMonth() + "/" : "")
+                                    + (releaseDate.getYear() != null ? releaseDate.getYear() : "");
+                            movie.setReleaseYear(formattedDate);
+                        }
+                    }
+
+                    // Añadir la película completa a la lista
+                    movieList.add(movie);
+                    movieAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MovieOverviewResponse> call, Throwable t) {
+                Log.e("API_ERROR", "Error al obtener detalles adicionales", t);
+            }
+        });
+    }
+
 
 
 }
