@@ -44,6 +44,19 @@
             android:layout_marginTop="8dp"
             android:text="Rating" />
 
+        <Button
+            android:id="@+id/btnSendSms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="#6200EE"
+            android:text="ENVIAR POR SMS"
+            android:textColor="#FFFFFF"
+            android:textAllCaps="true"
+            android:textSize="16sp"
+            android:padding="12dp" />
 
     </LinearLayout>
 </ScrollView>

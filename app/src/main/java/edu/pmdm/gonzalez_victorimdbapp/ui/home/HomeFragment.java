@@ -72,14 +72,18 @@ public class HomeFragment extends Fragment {
                     for (int i = 0; i < limit; i++) {
                         PopularMoviesResponse.Node node = edges.get(i).getNode();
 
-                        // Extraer el ID y la URL de la imagen de cada película
+                        // Extraer los datos de la película
                         String id = node.getId();
+                        String title = node.getTitleText() != null ? node.getTitleText().getText() : "Título desconocido";
                         String imageUrl = node.getPrimaryImage() != null ? node.getPrimaryImage().getUrl() : null;
+                        String releaseYear = node.getReleaseYear() != null ? String.valueOf(node.getReleaseYear().getYear()) : "Fecha desconocida";
 
-                        // Crear un objeto Movie con solo el ID y la URL de la imagen
+                        // Crear un objeto Movie con los datos básicos
                         Movie movie = new Movie();
                         movie.setId(id);
+                        movie.setTitle(title);
                         movie.setImageUrl(imageUrl);
+                        movie.setReleaseYear(releaseYear);
 
                         // Añadir la película a la lista
                         movieList.add(movie);
@@ -98,6 +102,7 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
 
 
 }
