@@ -43,16 +43,19 @@ public class HomeFragment extends Fragment {
         // Configurar RecyclerView con GridLayoutManager
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2)); // 2 columnas
 
-        movieAdapter = new MovieAdapter(movieList);
+        movieAdapter = new MovieAdapter(movieList, false); // No está en modo favoritos
         recyclerView.setAdapter(movieAdapter);
 
-        fetchMovies();
+        // Llamar a fetchMovies() solo si la lista está vacía
+        if (movieList.isEmpty()) {
+            fetchMovies();
+        }
 
         return root;
     }
 
-
     private void fetchMovies() {
+
         IMDBApiService apiService = new Retrofit.Builder()
                 .baseUrl("https://imdb-com.p.rapidapi.com/")
                 .addConverterFactory(GsonConverterFactory.create())

@@ -38,7 +38,7 @@ public class MovieListActivity extends AppCompatActivity {
         // Configuración del RecyclerView
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        movieAdapter = new MovieAdapter(movieList);
+        movieAdapter = new MovieAdapter(movieList, false);
         recyclerView.setAdapter(movieAdapter);
 
         // Llamada a la API
