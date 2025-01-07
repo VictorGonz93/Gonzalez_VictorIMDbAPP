@@ -3,6 +3,7 @@ package edu.pmdm.gonzalez_victorimdbapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -37,6 +38,10 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Configurar el logo dinámicamente (opcional)
+        ImageView appLogo = findViewById(R.id.app_logo);
+        appLogo.setImageResource(R.drawable.app_logo);
 
         // Configurar Firebase Auth
         firebaseAuth = FirebaseAuth.getInstance();
