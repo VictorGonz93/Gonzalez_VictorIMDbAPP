@@ -43,6 +43,11 @@
             android:name=".MovieDetailsActivity"
             android:exported="true"
             android:label="Gonzalez_VictorIMDbAPP"/>
+
+        <activity android:name=".MovieListActivity"
+            android:exported="true"
+            android:label="Gonzalez_VictorIMDbAPP"/>
+
     </application>
 
 </manifest>

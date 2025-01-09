@@ -1,20 +1,23 @@
 package edu.pmdm.gonzalez_victorimdbapp;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.pmdm.gonzalez_victorimdbapp.R;
 import edu.pmdm.gonzalez_victorimdbapp.adapter.MovieAdapter;
-import edu.pmdm.gonzalez_victorimdbapp.api.IMDBApiService;
+import edu.pmdm.gonzalez_victorimdbapp.database.FavoritesManager;
 import edu.pmdm.gonzalez_victorimdbapp.models.Movie;
-import edu.pmdm.gonzalez_victorimdbapp.models.MovieOverviewResponse;
-import edu.pmdm.gonzalez_victorimdbapp.models.PopularMoviesResponse;
+import edu.pmdm.gonzalez_victorimdbapp.models.TMDBMovie;
+import edu.pmdm.gonzalez_victorimdbapp.api.TMDBApiService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -27,124 +30,80 @@ public class MovieListActivity extends AppCompatActivity {
     private MovieAdapter movieAdapter;
     private List<Movie> movieList = new ArrayList<>();
 
-    private static final String API_KEY = "a3ffae3495msh22a0ce1566072cap15b401jsn2bc4e65ceaf2";
-    private static final String API_HOST = "imdb-com.p.rapidapi.com";
+    private static final String TMDB_API_KEY = "e9f84dbecca6c65f600d95bee2badcf5";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_list);
 
-        // Configuración del RecyclerView
         recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        movieAdapter = new MovieAdapter(movieList, false);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+
+        // Inicializar el adaptador con una lista vacía
+        movieList = new ArrayList<>();
+        movieAdapter = new MovieAdapter(movieList, false); // Configura el modo normal
         recyclerView.setAdapter(movieAdapter);
 
-        // Llamada a la API
-        fetchMovies();
+        // Obtén parámetros de búsqueda
+        int genreId = getIntent().getIntExtra("GENRE_ID", -1);
+        String year = getIntent().getStringExtra("YEAR");
+
+        // Realiza la búsqueda
+        searchMovies(genreId, year);
     }
 
-    private void fetchMovies() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://imdb-com.p.rapidapi.com/")
+    private void searchMovies(int genreId, String year) {
+        TMDBApiService apiService = new Retrofit.Builder()
+                .baseUrl("https://api.themoviedb.org/3/")
                 .addConverterFactory(GsonConverterFactory.create())
-                .build();
+                .build()
+                .create(TMDBApiService.class);
 
-        IMDBApiService apiService = retrofit.create(IMDBApiService.class);
+        Call<TMDBMovie.MovieSearchResponse> call = apiService.discoverMovies(
+                TMDB_API_KEY,
+                "en-US",
+                "",
+                1,
+                year,
+                genreId
+        );
 
-        Call<PopularMoviesResponse> call = apiService.getTopMeter(API_KEY, API_HOST, "ALL");
-
-        call.enqueue(new Callback<PopularMoviesResponse>() {
+        call.enqueue(new Callback<TMDBMovie.MovieSearchResponse>() {
             @Override
-            public void onResponse(Call<PopularMoviesResponse> call, Response<PopularMoviesResponse> response) {
+            public void onResponse(@NonNull Call<TMDBMovie.MovieSearchResponse> call,
+                                   @NonNull Response<TMDBMovie.MovieSearchResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<PopularMoviesResponse.Edge> edges = response.body().getData().getTopMeterTitles().getEdges();
-
-                    // Limitar a los primeros 10 elementos
-                    int limit = Math.min(edges.size(), 10);
-                    for (int i = 0; i < limit; i++) {
-                        PopularMoviesResponse.Node node = edges.get(i).getNode();
-
-                        // Extraer los datos básicos de la película
-                        String id = node.getId();
-                        String title = node.getTitleText().getText();
-                        String imageUrl = node.getPrimaryImage() != null ? node.getPrimaryImage().getUrl() : null;
-
-                        // Asignar año de lanzamiento si existe
-                        String releaseYear = node.getReleaseYear() != null
-                                ? String.valueOf(node.getReleaseYear().getYear())
-                                : "Unknown";
-
-                        // Crear un objeto Movie y añadirlo a la lista
-                        Movie movie = new Movie();
-                        movie.setId(id);
-                        movie.setTitle(title);
-                        movie.setImageUrl(imageUrl);
-                        movie.setReleaseYear(releaseYear);
-
-                        // Llamar al endpoint 'get-overview' para completar la información
-                        fetchAdditionalDetails(apiService, movie);
-                    }
+                    updateMovieList(response.body().results);
                 } else {
-                    Log.e("API_ERROR", "Respuesta no exitosa: " + response.code());
+                    Toast.makeText(MovieListActivity.this, "No se encontraron películas.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<PopularMoviesResponse> call, Throwable t) {
-                Log.e("API_ERROR", "Error en la llamada a la API", t);
+            public void onFailure(@NonNull Call<TMDBMovie.MovieSearchResponse> call, @NonNull Throwable t) {
+                Toast.makeText(MovieListActivity.this, "Error al cargar películas.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    // Método para obtener detalles adicionales de cada película
-    private void fetchAdditionalDetails(IMDBApiService apiService, Movie movie) {
-        Call<MovieOverviewResponse> call = apiService.getOverview(API_KEY, API_HOST, movie.getId());
+    private void updateMovieList(List<TMDBMovie.MovieSearchResponse.MovieResult> results) {
+        movieList.clear();
+        for (TMDBMovie.MovieSearchResponse.MovieResult result : results) {
+            Movie movie = new Movie();
+            movie.setId(String.valueOf(result.id));
+            movie.setTitle(result.title);
+            movie.setImageUrl("https://image.tmdb.org/t/p/w500" + result.posterPath);
+            movie.setReleaseYear(result.releaseDate);
+            movie.setOverview(result.overview);
+            movie.setRating(String.valueOf(result.voteAverage));
 
-        call.enqueue(new Callback<MovieOverviewResponse>() {
-            @Override
-            public void onResponse(Call<MovieOverviewResponse> call, Response<MovieOverviewResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    MovieOverviewResponse.Data data = response.body().getData();
+            // Formatear el rating a un decimal
+            String formattedRating = String.format("%.1f", result.voteAverage);
+            movie.setRating(formattedRating);
 
-                    // Extraer datos adicionales
-                    if (data != null && data.getTitle() != null) {
-                        MovieOverviewResponse.Title title = data.getTitle();
-
-                        // Asignar resumen (overview)
-                        if (title.getPlot() != null && title.getPlot().getPlotText() != null) {
-                            movie.setOverview(title.getPlot().getPlotText().getPlainText());
-                        }
-
-                        // Asignar puntuación (rating)
-                        if (title.getRatingsSummary() != null) {
-                            movie.setRating(String.valueOf(title.getRatingsSummary().getAggregateRating()));
-                        }
-
-                        // Formatear la fecha de lanzamiento
-                        if (title.getReleaseDate() != null) {
-                            MovieOverviewResponse.ReleaseDate releaseDate = title.getReleaseDate();
-                            String formattedDate = (releaseDate.getDay() != null ? releaseDate.getDay() + "/" : "")
-                                    + (releaseDate.getMonth() != null ? releaseDate.getMonth() + "/" : "")
-                                    + (releaseDate.getYear() != null ? releaseDate.getYear() : "");
-                            movie.setReleaseYear(formattedDate);
-                        }
-                    }
-
-                    // Añadir la película completa a la lista
-                    movieList.add(movie);
-                    movieAdapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MovieOverviewResponse> call, Throwable t) {
-                Log.e("API_ERROR", "Error al obtener detalles adicionales", t);
-            }
-        });
+            movieList.add(movie);
+        }
+        movieAdapter.notifyDataSetChanged(); // Refleja los cambios en el RecyclerView
     }
-
-
-
 }

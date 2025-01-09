@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 import edu.pmdm.gonzalez_victorimdbapp.database.FavoritesManager;
 
@@ -20,7 +19,6 @@ import java.util.List;
 
 import edu.pmdm.gonzalez_victorimdbapp.MovieDetailsActivity;
 import edu.pmdm.gonzalez_victorimdbapp.R;
-import edu.pmdm.gonzalez_victorimdbapp.database.FavoritesManager;
 import edu.pmdm.gonzalez_victorimdbapp.models.Movie;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
@@ -51,11 +49,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                 .load(movie.getImageUrl())
                 .into(holder.imageView);
 
-        // Manejar el evento de click corto para abrir detalles
+        // Manejar el evento de clic corto para abrir detalles
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(holder.itemView.getContext(), MovieDetailsActivity.class);
+            Intent intent = new Intent(context, MovieDetailsActivity.class);
             intent.putExtra("MOVIE_DATA", movie); // Pasar el objeto Movie
-            holder.itemView.getContext().startActivity(intent);
+            context.startActivity(intent);
         });
 
         // Configurar clic largo dependiendo del modo

@@ -93,19 +93,24 @@ public class GalleryFragment extends Fragment {
             Gson gson = new Gson();
             jsonFavoritesToShare = gson.toJson(favoriteMovies); // Guardar el JSON en la variable
 
-            // Solicitar permisos antes de compartir
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // Android 12+ (API 31+)
-                bluetoothPermissionLauncher.launch(new String[]{
-                        Manifest.permission.BLUETOOTH_CONNECT,
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                });
+            if (favoriteMovies.isEmpty()) {
+                // Mostrar un mensaje si la lista de favoritos está vacía
+                Toast.makeText(requireContext(), "No se puede compartir porque tu lista de favoritos está vacía.", Toast.LENGTH_SHORT).show();
             } else {
-                // Para versiones anteriores a Android 12
-                bluetoothPermissionLauncher.launch(new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                });
+                // Comprobar permisos y compartir si la lista no está vacía
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // Android 12+ (API 31+)
+                    bluetoothPermissionLauncher.launch(new String[]{
+                            Manifest.permission.BLUETOOTH_CONNECT,
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                    });
+                } else {
+                    // Para versiones anteriores a Android 12
+                    bluetoothPermissionLauncher.launch(new String[]{
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                    });
+                }
             }
         });
 
