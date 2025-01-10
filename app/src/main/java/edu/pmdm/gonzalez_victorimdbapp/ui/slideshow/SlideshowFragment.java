@@ -28,6 +28,15 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Fragmento que permite a los usuarios buscar películas por género y año.
+ * Muestra un spinner con géneros de películas obtenidos desde la API de TMDB
+ * y un campo de texto para ingresar el año.
+ * Los resultados de la búsqueda se muestran en `MovieListActivity`.
+ *
+ * @version 1.0
+ * @author Victor Gonzalez Villapalo
+ */
 public class SlideshowFragment extends Fragment {
 
     private Spinner genreSpinner;
@@ -98,7 +107,8 @@ public class SlideshowFragment extends Fragment {
     }
 
     /**
-     * Método para cargar los géneros desde la API de TMDB y poblar el spinner.
+     * Realiza una llamada a la API de TMDB para obtener los géneros de películas.
+     * Los géneros obtenidos se utilizan para llenar el spinner.
      */
     private void fetchGenres() {
         Retrofit retrofit = new Retrofit.Builder()
@@ -135,7 +145,9 @@ public class SlideshowFragment extends Fragment {
     }
 
     /**
-     * Método para obtener el ID del género seleccionado.
+     * Busca el ID del género seleccionado a partir de su nombre.
+     * @param genreName el nombre del género.
+     * @return el ID del género o -1 si no se encuentra.
      */
     private int getGenreId(String genreName) {
         for (TMDBMovie.GenresResponse.Genre genre : genreList) {

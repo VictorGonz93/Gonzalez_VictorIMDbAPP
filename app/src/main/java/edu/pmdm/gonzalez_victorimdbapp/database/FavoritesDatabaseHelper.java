@@ -4,6 +4,14 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+/**
+ * Clase que extiende SQLiteOpenHelper para gestionar la base de datos de películas favoritas.
+ * Crea y actualiza la base de datos, asegurando el almacenamiento y recuperación de las películas favoritas
+ * para cada usuario.
+ *
+ * @version 1.0
+ * @author Victor Gonzalez Villapalo
+ */
 public class FavoritesDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "favorites_db";
@@ -17,6 +25,10 @@ public class FavoritesDatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_RELEASE_DATE = "release_date";
     public static final String COLUMN_RATING = "rating";
 
+    /**
+     * Comando SQL para crear la tabla "favorites".
+     * Contiene columnas para ID de la película, correo del usuario, título, URL de la imagen, fecha de lanzamiento y calificación.
+     */
     private static final String TABLE_CREATE =
             "CREATE TABLE " + TABLE_FAVORITES + " (" +
                     COLUMN_ID + " TEXT, " +
@@ -31,11 +43,25 @@ public class FavoritesDatabaseHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    /**
+     * Método llamado al crear la base de datos por primera vez.
+     * Crea la tabla "favorites" para almacenar películas favoritas.
+     *
+     * @param db Instancia de SQLiteDatabase para ejecutar comandos SQL.
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(TABLE_CREATE);
     }
 
+    /**
+     * Método llamado cuando la versión de la base de datos cambia.
+     * Este método elimina la tabla existente y la vuelve a crear con la nueva estructura.
+     *
+     * @param db Instancia de SQLiteDatabase para ejecutar comandos SQL.
+     * @param oldVersion Versión anterior de la base de datos.
+     * @param newVersion Nueva versión de la base de datos.
+     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < newVersion) {
@@ -44,6 +70,14 @@ public class FavoritesDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Método llamado cuando se intenta degradar la versión de la base de datos.
+     * Este método elimina la tabla existente y la vuelve a crear desde cero.
+     *
+     * @param db Instancia de SQLiteDatabase para ejecutar comandos SQL.
+     * @param oldVersion Versión anterior de la base de datos.
+     * @param newVersion Nueva versión a la que se intenta degradar.
+     */
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Eliminar la tabla y volver a crearla

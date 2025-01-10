@@ -25,6 +25,13 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Fragmento para mostrar una lista de las películas más populares.
+ * Obtiene los datos de las películas desde la API de IMDB y los muestra en un RecyclerView.
+ *
+ * @version 1.0
+ * @author Victor Gonzalez Villapalo
+ */
 public class HomeFragment extends Fragment {
 
     private RecyclerView recyclerView;
@@ -54,6 +61,10 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
+    /**
+     * Realiza la llamada a la API de IMDB para obtener las películas más populares.
+     * Limita los resultados a los primeros 10 elementos y actualiza la lista de películas y el RecyclerView.
+     */
     private void fetchMovies() {
 
         IMDBApiService apiService = new Retrofit.Builder()
@@ -105,7 +116,5 @@ public class HomeFragment extends Fragment {
             }
         });
     }
-
-
 
 }

@@ -24,6 +24,14 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Actividad para mostrar una lista de películas basada en los criterios de búsqueda.
+ * Realiza llamadas a la API de TMDB para obtener películas por género y año,
+ * y muestra los resultados en un RecyclerView.
+ *
+ * @version 1.0
+ * @author Victor Gonzalez Villapalo
+ */
 public class MovieListActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -42,7 +50,7 @@ public class MovieListActivity extends AppCompatActivity {
 
         // Inicializar el adaptador con una lista vacía
         movieList = new ArrayList<>();
-        movieAdapter = new MovieAdapter(movieList, false); // Configura el modo normal
+        movieAdapter = new MovieAdapter(movieList, false);
         recyclerView.setAdapter(movieAdapter);
 
         // Obtén parámetros de búsqueda
@@ -53,6 +61,12 @@ public class MovieListActivity extends AppCompatActivity {
         searchMovies(genreId, year);
     }
 
+    /**
+     * Realiza una llamada a la API de TMDB para buscar películas basadas en género y año.
+     *
+     * @param genreId ID del género seleccionado para la búsqueda.
+     * @param year Año seleccionado para filtrar las películas.
+     */
     private void searchMovies(int genreId, String year) {
         TMDBApiService apiService = new Retrofit.Builder()
                 .baseUrl("https://api.themoviedb.org/3/")
@@ -87,6 +101,12 @@ public class MovieListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Actualiza la lista de películas con los resultados obtenidos desde la API.
+     * Convierte los datos de la API en objetos Movie y los agrega al adaptador.
+     *
+     * @param results Lista de resultados obtenidos desde la API de TMDB.
+     */
     private void updateMovieList(List<TMDBMovie.MovieSearchResponse.MovieResult> results) {
         movieList.clear();
         for (TMDBMovie.MovieSearchResponse.MovieResult result : results) {

@@ -3,6 +3,14 @@ package edu.pmdm.gonzalez_victorimdbapp.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * Clase que representa una película con atributos como título, imagen, año de lanzamiento,
+ * calificación y detalles adicionales para integrarse con la API de películas.
+ * Implementa Parcelable para permitir el paso de objetos Movie entre actividades.
+ *
+ * @version 1.0
+ * @author Victor Gonzalez Villapalo
+ */
 public class Movie implements Parcelable {
     // Atributos existentes
     private String id;          // ID de la película
@@ -51,8 +59,8 @@ public class Movie implements Parcelable {
         dest.writeString(imageUrl);
         dest.writeString(releaseYear);
         dest.writeString(rating);
-        dest.writeString(overview); // Escribir el nuevo campo 'overview'
-        dest.writeString(genreId);  // Escribir el nuevo campo 'genreId'
+        dest.writeString(overview);
+        dest.writeString(genreId);
     }
 
     @Override

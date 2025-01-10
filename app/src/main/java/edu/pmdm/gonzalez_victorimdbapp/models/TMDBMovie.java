@@ -4,6 +4,14 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+/**
+ * Clase que modela las respuestas de la API de TMDB.
+ * Contiene información sobre géneros de películas y los resultados de búsquedas de películas,
+ * incluyendo detalles como título, fecha de lanzamiento, descripción, puntuación y más.
+ *
+ * @version 1.0
+ * @author Victor Gonzalez Villapalo
+ */
 public class TMDBMovie {
 
     public static class GenresResponse {

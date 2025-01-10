@@ -23,7 +23,14 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-
+/**
+ * Clase LoginActivity.
+ * Maneja el inicio de sesión de los usuarios mediante Google Sign-In y Firebase Authentication.
+ * Redirige al usuario a la actividad principal si ya está autenticado.
+ *
+ * @version 1.0
+ * @author Victor Gonzalez Villapalo
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
@@ -72,7 +79,10 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    // ActivityResultLauncher para Google Sign-In
+    /**
+     * Lanzador para manejar el resultado de Google Sign-In.
+     * Procesa el resultado y autentica al usuario en Firebase si el inicio de sesión fue exitoso.
+     */
     private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -88,6 +98,11 @@ public class LoginActivity extends AppCompatActivity {
             }
     );
 
+    /**
+     * Autentica al usuario en Firebase utilizando las credenciales de Google Sign-In.
+     *
+     * @param account Cuenta de Google obtenida tras iniciar sesión correctamente.
+     */
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         firebaseAuth.signInWithCredential(credential)
@@ -101,6 +116,11 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Navega a la actividad principal pasando la información del usuario autenticado.
+     *
+     * @param user Objeto FirebaseUser con los datos del usuario autenticado.
+     */
     private void navigateToMainActivity(FirebaseUser user) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("USER_NAME", user.getDisplayName());

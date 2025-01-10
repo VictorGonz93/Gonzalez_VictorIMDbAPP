@@ -2,6 +2,13 @@ package edu.pmdm.gonzalez_victorimdbapp.models;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Clase que modela la respuesta de la API para obtener información detallada de una película.
+ * Incluye datos como el título, fecha de lanzamiento, resumen, calificación y trama de la película.
+ *
+ * @version 1.0
+ * @author Victor Gonzalez Villapalo
+ */
 public class MovieOverviewResponse {
     @SerializedName("data")
     public Data data;

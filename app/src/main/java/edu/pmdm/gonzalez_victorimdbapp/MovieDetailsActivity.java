@@ -29,6 +29,15 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Actividad para mostrar los detalles de una película seleccionada.
+ * Permite ver información de la película como título, descripción, calificación, y fecha de lanzamiento.
+ * También incluye la funcionalidad para enviar esta información vía SMS seleccionando un contacto.
+ *
+ * @version 1.0
+ * @author Victor Gonzalez Villapalo
+ */
+
 public class MovieDetailsActivity extends AppCompatActivity {
 
     private Button btnSendSms;
@@ -40,6 +49,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private Movie selectedMovie; // Almacena la película seleccionada
 
+    /** Lanzador de permisos para verificar permisos de lectura de contactos y envío de SMS. */
     private final ActivityResultLauncher<String[]> permissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
                 boolean allGranted = true;
@@ -57,6 +67,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 }
             });
 
+    /** Lanzador de actividad para seleccionar un contacto desde la lista de contactos. */
     private final ActivityResultLauncher<Intent> contactPickerLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
@@ -92,7 +103,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
         btnSendSms.setOnClickListener(v -> checkPermissionsAndSendSms());
     }
 
-
+    /**
+     * Muestra los detalles básicos de la película seleccionada en las vistas correspondientes.
+     *
+     * @param movie Objeto de tipo Movie con los detalles básicos de la película.
+     */
     private void displayMovieDetails(Movie movie) {
         Glide.with(this)
                 .load(movie.getImageUrl())
@@ -105,6 +120,12 @@ public class MovieDetailsActivity extends AppCompatActivity {
         movieRatingTextView.setText(movie.getRating() != null ? "Rating: " + movie.getRating() : "Sin rating");
     }
 
+    /**
+     * Realiza una solicitud a la API de IMDB para obtener detalles adicionales de la película,
+     * como el rating y la descripción, usando su ID.
+     *
+     * @param movieId ID de la película en IMDB.
+     */
     private void fetchMovieDetailsFromAPI(String movieId) {
         IMDBApiService apiService = new Retrofit.Builder()
                 .baseUrl("https://imdb-com.p.rapidapi.com/")
@@ -147,7 +168,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
         });
     }
 
-
+    /**
+     * Actualiza las vistas con los detalles obtenidos desde la API de IMDB.
+     *
+     * @param data Objeto que contiene los datos detallados de la película.
+     */
     private void updateUIWithDetails(MovieOverviewResponse.Data data) {
         if (data.getTitle() != null && data.getTitle().getTitleText() != null) {
             movieTitleTextView.setText(data.getTitle().getTitleText().getText());
@@ -168,6 +193,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Verifica los permisos necesarios para leer contactos y enviar SMS.
+     * Si los permisos son concedidos, abre el selector de contactos.
+     */
     private void checkPermissionsAndSendSms() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
@@ -177,11 +206,20 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Abre el selector de contactos para que el usuario seleccione un contacto.
+     */
     private void openContactPicker() {
         Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
         contactPickerLauncher.launch(intent);
     }
 
+    /**
+     * Recupera el número de teléfono del contacto seleccionado.
+     * Si se encuentra un número válido, prepara y envía un mensaje SMS con los detalles de la película.
+     *
+     * @param contactUri URI del contacto seleccionado.
+     */
     private void retrievePhoneNumber(Uri contactUri) {
         String phoneNumber = null;
 
@@ -200,7 +238,12 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * Crea un mensaje SMS con los detalles de la película y lo envía al número de teléfono proporcionado.
+     *
+     * @param phoneNumber Número de teléfono del destinatario.
+     * @param movie Objeto Movie que contiene los detalles de la película.
+     */
     private void sendSms(String phoneNumber, Movie movie) {
         if (movie == null) {
             Toast.makeText(this, "No se pudo obtener la información de la película.", Toast.LENGTH_SHORT).show();
@@ -227,7 +270,5 @@ public class MovieDetailsActivity extends AppCompatActivity {
             Toast.makeText(this, "Error al abrir la aplicación de mensajería.", Toast.LENGTH_SHORT).show();
         }
     }
-
-
 
 }

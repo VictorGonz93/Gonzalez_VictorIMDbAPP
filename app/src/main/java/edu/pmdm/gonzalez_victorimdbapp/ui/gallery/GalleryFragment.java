@@ -34,6 +34,13 @@ import edu.pmdm.gonzalez_victorimdbapp.adapter.MovieAdapter;
 import edu.pmdm.gonzalez_victorimdbapp.database.FavoritesManager;
 import edu.pmdm.gonzalez_victorimdbapp.models.Movie;
 
+/**
+ * Fragmento para mostrar las películas favoritas del usuario.
+ * Permite visualizar las películas favoritas y compartirlas en formato JSON vía Bluetooth.
+ *
+ * @version 1.0
+ * @author Victor Gonzalez Villapalo
+ */
 public class GalleryFragment extends Fragment {
 
     private RecyclerView recyclerView;
@@ -118,6 +125,11 @@ public class GalleryFragment extends Fragment {
         return root;
     }
 
+    /**
+     * Comparte las películas favoritas del usuario en formato JSON usando Bluetooth.
+     * Muestra un diálogo previo con el contenido en JSON antes de iniciar el proceso de compartir.
+     * @param jsonFavorites las películas favoritas en formato JSON.
+     */
     private void shareFavoritesViaBluetooth(String jsonFavorites) {
         // Mostrar el JSON en un AlertDialog antes de proceder con Bluetooth
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
@@ -154,6 +166,10 @@ public class GalleryFragment extends Fragment {
         builder.show();
     }
 
+    /**
+     * Actualiza la visibilidad de la vista vacía o la lista de favoritos según el contenido de la lista.
+     * Muestra un mensaje si la lista de favoritos está vacía.
+     */
     private void updateEmptyViewVisibility() {
         if (favoriteMovies.isEmpty()) {
             emptyView.setVisibility(View.VISIBLE);
@@ -164,6 +180,10 @@ public class GalleryFragment extends Fragment {
         }
     }
 
+    /**
+     * Recarga la lista de favoritos desde la base de datos al reanudar el fragmento.
+     * Actualiza el RecyclerView y la visibilidad de la vista vacía si es necesario.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -178,6 +198,9 @@ public class GalleryFragment extends Fragment {
         updateEmptyViewVisibility();
     }
 
+    /**
+     * Limpia las referencias a las vistas al destruir la vista del fragmento, para evitar fugas de memoria.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

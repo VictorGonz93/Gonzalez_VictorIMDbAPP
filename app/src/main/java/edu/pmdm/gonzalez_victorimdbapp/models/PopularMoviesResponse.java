@@ -4,6 +4,14 @@ import java.util.List;
 
 import java.util.List;
 
+/**
+ * Clase que modela la respuesta de la API para obtener las películas más populares.
+ * Proporciona información como el título, año de lanzamiento, imagen principal y ID de la película.
+ *
+ * @version 1.0
+ * @author Victor Gonzalez Villapalo
+ */
+
 public class PopularMoviesResponse {
 
     private Data data;

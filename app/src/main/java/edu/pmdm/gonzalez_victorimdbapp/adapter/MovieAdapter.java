@@ -21,17 +21,40 @@ import edu.pmdm.gonzalez_victorimdbapp.MovieDetailsActivity;
 import edu.pmdm.gonzalez_victorimdbapp.R;
 import edu.pmdm.gonzalez_victorimdbapp.models.Movie;
 
+/**
+ * Adaptador personalizado para mostrar películas en un RecyclerView.
+ * Soporta dos modos:
+ * - Modo normal: permite agregar películas a favoritos con un clic largo.
+ * - Modo favoritos: permite eliminar películas de favoritos con un clic largo.
+ *
+ * @version 1.0
+ * @author Victor Gonzalez Villapalo
+ */
+
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
     private List<Movie> movieList;
     private Context context;
     private boolean isFavoritesMode; // Indica si el adaptador se usa en la lista de favoritos
 
+    /**
+     * Constructor para inicializar el adaptador con la lista de películas y el modo de uso.
+     *
+     * @param movieList Lista de películas que se mostrarán en el RecyclerView.
+     * @param isFavoritesMode Indica si el adaptador se usa en la lista de favoritos.
+     */
     public MovieAdapter(List<Movie> movieList, boolean isFavoritesMode) {
         this.movieList = movieList;
         this.isFavoritesMode = isFavoritesMode;
     }
 
+    /**
+     * Crea y devuelve un nuevo ViewHolder para representar un elemento de la lista.
+     *
+     * @param parent Vista principal donde se agregará el elemento.
+     * @param viewType Tipo de vista (no utilizado en este adaptador).
+     * @return Un nuevo MovieViewHolder.
+     */
     @NonNull
     @Override
     public MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -40,6 +63,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         return new MovieViewHolder(view);
     }
 
+    /**
+     * Asocia los datos de una película con un ViewHolder en la posición especificada.
+     *
+     * @param holder ViewHolder que representa un elemento de la lista.
+     * @param position Posición del elemento dentro de la lista.
+     */
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
         Movie movie = movieList.get(position);
@@ -77,14 +106,28 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         });
     }
 
+    /**
+     * Devuelve el número total de elementos en la lista.
+     *
+     * @return Número de películas en la lista.
+     */
     @Override
     public int getItemCount() {
         return movieList.size();
     }
 
+    /**
+     * ViewHolder para representar una película en el RecyclerView.
+     * Contiene una referencia a la vista de imagen de la película.
+     */
     public static class MovieViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
 
+        /**
+         * Inicializa el ViewHolder con la vista del elemento.
+         *
+         * @param itemView Vista de un elemento individual.
+         */
         public MovieViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.movie_image);
