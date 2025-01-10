@@ -8,7 +8,7 @@
     <string name="action_settings">Settings</string>
 
     <string name="menu_home">Top 10</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
-    <string name="default_web_client_id">358877077053-qvk55jcna7ej6amqaugf8k16vsda3crs.apps.googleusercontent.com</string>
+    <string name="menu_gallery">Favoritas</string>
+    <string name="menu_slideshow">Buscar Película</string>
+    <string name="default_web_client_id">358877077053-g2be1dn06ahgve8j3cst769582odpkmv.apps.googleusercontent.com</string>
 </resources>

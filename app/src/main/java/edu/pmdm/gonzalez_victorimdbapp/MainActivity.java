@@ -24,6 +24,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import edu.pmdm.gonzalez_victorimdbapp.databinding.ActivityMainBinding;
 import com.bumptech.glide.Glide;
 
+/**
+ * Clase MainActivity.
+ * Actúa como el contenedor principal de la aplicación con un DrawerLayout
+ * y un NavigationView para navegar entre diferentes fragmentos.
+ * Maneja la autenticación del usuario y permite el cierre de sesión.
+ *
+ * @version 1.0
+ * @author Victor Gonzalez Villapalo
+ */
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -59,7 +69,10 @@ public class MainActivity extends AppCompatActivity {
             updateUserInfo(userName, userEmail, userPhoto);
         }
 
-        // Configurar el botón de logout
+        /**
+         * Configura el botón de logout en el encabezado del NavigationView.
+         * Cierra la sesión del usuario tanto en Firebase como en Google, y redirige a LoginActivity.
+         */
         navigationView = findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
         Button logoutButton = headerView.findViewById(R.id.btnLogout);
@@ -82,6 +95,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Actualiza la información del usuario en el encabezado del DrawerLayout.
+     * Muestra el nombre, correo y foto de perfil del usuario autenticado.
+     *
+     * @param userName  Nombre del usuario.
+     * @param userEmail Correo electrónico del usuario.
+     * @param userPhoto URL de la foto de perfil del usuario.
+     */
     private void updateUserInfo(String userName, String userEmail, String userPhoto) {
         NavigationView navigationView = findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
@@ -104,7 +125,8 @@ public class MainActivity extends AppCompatActivity {
             // Usar una imagen predeterminada si no hay foto
             userImageView.setImageResource(R.drawable.default_user_image);
         }
-        }
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);

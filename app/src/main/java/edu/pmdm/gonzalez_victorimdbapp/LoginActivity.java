@@ -3,6 +3,7 @@ package edu.pmdm.gonzalez_victorimdbapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -22,7 +23,14 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-
+/**
+ * Clase LoginActivity.
+ * Maneja el inicio de sesión de los usuarios mediante Google Sign-In y Firebase Authentication.
+ * Redirige al usuario a la actividad principal si ya está autenticado.
+ *
+ * @version 1.0
+ * @author Victor Gonzalez Villapalo
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
@@ -37,21 +45,26 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        SignInButton signInButton = findViewById(R.id.btnSignIn);
-        signInButton.setSize(SignInButton.SIZE_WIDE); // Usa el tamaño amplio para incluir el texto "Sign in with Google"
-        signInButton.setColorScheme(SignInButton.COLOR_LIGHT); // Cambia el color si prefieres claro u oscuro
+
+        // Configurar el logo dinámicamente (opcional)
+        ImageView appLogo = findViewById(R.id.app_logo);
+        appLogo.setImageResource(R.drawable.app_logo);
 
         // Configurar Firebase Auth
         firebaseAuth = FirebaseAuth.getInstance();
 
-        // Desloguear al usuario
-        firebaseAuth.signOut();
+        // Verificar si ya hay un usuario autenticado
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser != null) {
+            // Usuario ya autenticado, redirigir a MainActivity
+            navigateToMainActivity(currentUser);
+            return;
+        }
 
-        // Cerrar sesión en Google
-        GoogleSignIn.getClient(
-                this,
-                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
-        ).signOut();
+        // Configurar botón de inicio de sesión
+        SignInButton signInButton = findViewById(R.id.btnSignIn);
+        signInButton.setSize(SignInButton.SIZE_WIDE);
+        signInButton.setColorScheme(SignInButton.COLOR_LIGHT);
 
         // Configurar Google Sign-In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -59,13 +72,17 @@ public class LoginActivity extends AppCompatActivity {
                 .requestEmail()
                 .build();
 
+        // Evento de clic para iniciar sesión
         findViewById(R.id.btnSignIn).setOnClickListener(v -> {
             Intent signInIntent = GoogleSignIn.getClient(this, gso).getSignInIntent();
             signInLauncher.launch(signInIntent);
         });
     }
 
-    // ActivityResultLauncher para Google Sign-In
+    /**
+     * Lanzador para manejar el resultado de Google Sign-In.
+     * Procesa el resultado y autentica al usuario en Firebase si el inicio de sesión fue exitoso.
+     */
     private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -81,6 +98,11 @@ public class LoginActivity extends AppCompatActivity {
             }
     );
 
+    /**
+     * Autentica al usuario en Firebase utilizando las credenciales de Google Sign-In.
+     *
+     * @param account Cuenta de Google obtenida tras iniciar sesión correctamente.
+     */
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         firebaseAuth.signInWithCredential(credential)
@@ -94,6 +116,11 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Navega a la actividad principal pasando la información del usuario autenticado.
+     *
+     * @param user Objeto FirebaseUser con los datos del usuario autenticado.
+     */
     private void navigateToMainActivity(FirebaseUser user) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("USER_NAME", user.getDisplayName());
