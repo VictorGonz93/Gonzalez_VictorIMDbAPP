@@ -37,7 +37,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private MovieAdapter movieAdapter;
     private List<Movie> movieList = new ArrayList<>();
-    private static final String API_KEY = "a3ffae3495msh22a0ce1566072cap15b401jsn2bc4e65ceaf2";
+    private static final String API_KEY = "55d85b5f3cmsh4613c645ec2f533p1989bajsna5fafe7facca";
     private static final String API_HOST = "imdb-com.p.rapidapi.com";
 
     @Override

@@ -3,14 +3,12 @@ package edu.pmdm.gonzalez_victorimdbapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Menu;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -22,7 +20,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import edu.pmdm.gonzalez_victorimdbapp.databinding.ActivityMainBinding;
-import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
 /**
  * Clase MainActivity.
@@ -49,8 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
                 .setOpenableLayout(drawer)
@@ -115,8 +112,8 @@ public class MainActivity extends AppCompatActivity {
         userEmailTextView.setText(userEmail);
 
         if (userPhoto != null) {
-            // Cargar la imagen de perfil con Glide
-            Glide.with(this)
+            // Cargar la imagen de perfil con Picasso
+            Picasso.get()
                     .load(userPhoto)
                     .placeholder(R.drawable.default_user_image) // Imagen predeterminada mientras carga
                     .error(R.drawable.default_user_image) // Imagen predeterminada en caso de error
@@ -126,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
             userImageView.setImageResource(R.drawable.default_user_image);
         }
     }
+
 
     @Override
     public boolean onSupportNavigateUp() {
